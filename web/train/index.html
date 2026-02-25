@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Dashboard — Translation Model</title>
+  <link rel="stylesheet" href="/static/train/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-icon">⚡</div>
+      <h1>Training Dashboard</h1>
+    </div>
+    <div class="header-right">
+      <span class="status-badge" id="statusBadge">Disconnected</span>
+      <a href="/translate" class="nav-link">Open Translator →</a>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <!-- Top stats row -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Epoch</div>
+        <div class="stat-value" id="epochValue">0 / 0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Global Step</div>
+        <div class="stat-value" id="stepValue">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Speed</div>
+        <div class="stat-value" id="speedValue">— samp/s</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ETA</div>
+        <div class="stat-value" id="etaValue">—</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-label">Latest Loss</div>
+        <div class="stat-value" id="lossValue">—</div>
+      </div>
+      <div class="stat-card highlight-blue">
+        <div class="stat-label">Latest BLEU</div>
+        <div class="stat-value" id="bleuValue">—</div>
+      </div>
+    </section>
+
+    <!-- Charts row -->
+    <section class="charts-row">
+      <div class="chart-card wide">
+        <h3>Loss</h3>
+        <canvas id="lossChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>BLEU Score</h3>
+        <canvas id="bleuChart"></canvas>
+      </div>
+    </section>
+
+    <section class="charts-row">
+      <div class="chart-card">
+        <h3>Learning Rate</h3>
+        <canvas id="lrChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Training Speed</h3>
+        <canvas id="speedChart"></canvas>
+      </div>
+      <div class="chart-card wide">
+        <h3>Sample Translations</h3>
+        <div class="samples-container" id="samplesContainer">
+          <div class="sample-placeholder">Waiting for evaluation step...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/train/app.js"></script>
+</body>
+
+</html>

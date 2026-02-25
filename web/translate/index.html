@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translator — EN ↔ FR</title>
+  <meta name="description" content="Neural machine translation between English and French">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/translate/style.css">
+</head>
+
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-icon">🌐</span>
+          <span class="brand-text">Translator</span>
+        </div>
+        <nav class="nav-links">
+          <a href="/dashboard" class="nav-link">Training Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="translator-container">
+        <!-- Language bar -->
+        <div class="language-bar">
+          <button class="lang-btn active" id="srcLangBtn">English</button>
+          <button class="swap-btn" id="swapBtn" title="Swap languages">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+          <button class="lang-btn" id="tgtLangBtn">French</button>
+        </div>
+
+        <!-- Text areas -->
+        <div class="panels">
+          <!-- Source panel -->
+          <div class="panel source-panel">
+            <div class="panel-header">Source (English)</div>
+            <textarea id="sourceText" placeholder="Type to translate..." autofocus></textarea>
+            <div class="panel-footer">
+              <span class="char-count" id="charCount">0 / 5000</span>
+              <div class="footer-actions">
+                <button class="token-toggle-btn" id="tokenToggleBtn" title="Show token split">Show Tokens</button>
+                <button class="clear-btn" id="clearBtn" title="Clear text">✕</button>
+              </div>
+            </div>
+
+            <div class="token-display" id="tokenDisplay" style="display:none;">
+              <!-- Tokens will be injected here -->
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="panel-divider"></div>
+
+          <!-- Target panel -->
+          <div class="panel target-panel">
+            <!-- Model Result -->
+            <div class="result-box model-result">
+              <div class="panel-header">
+                <span>Our Model</span>
+                <span class="bleu-badge" id="modelBleu" title="BLEU score vs Google Translate">BLEU: --</span>
+              </div>
+              <div class="output-text" id="modelOutput">
+                <span class="placeholder-text">Model translation...</span>
+              </div>
+              <div class="back-translation-container" id="backTranslationContainer" style="display:none;">
+                <div class="back-label">Back-translation to English:</div>
+                <div class="back-text" id="backTranslationDisplay"></div>
+              </div>
+            </div>
+
+            <!-- Google Result -->
+            <div class="result-box google-result">
+              <div class="panel-header">
+                <span>Google Translate (Ground Truth)</span>
+              </div>
+              <div class="output-text" id="googleOutput">
+                <span class="placeholder-text">Google translation...</span>
+              </div>
+            </div>
+
+            <div class="panel-footer">
+              <button class="copy-btn" id="copyBtn" title="Copy model translation">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+              </button>
+            </div>
+            <!-- Loading indicator -->
+            <div class="loading-bar" id="loadingBar"></div>
+          </div>
+        </div>
+
+        <!-- Translate button (mobile) -->
+        <button class="translate-btn" id="translateBtn">Translate</button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Neural Machine Translation · Transformer Encoder-Decoder</span>
+    </footer>
+  </div>
+
+  <script src="/static/translate/app.js"></script>
+</body>
+
+</html>

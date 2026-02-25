@@ -1,0 +1,52 @@
+# === Translation Platform Configuration ===
+
+# Data
+data:
+  csv_path: "data/en-fr.csv"
+  src_col: "en"
+  tgt_col: "fr"
+  max_seq_len: 128
+  val_split: 0.05
+  shuffle_buffer: 2000000
+  chunk_size: 10000          # rows per CSV chunk
+  max_rows: null             # set to e.g. 10000 for quick testing
+
+# Tokenizer
+tokenizer:
+  type: "bpe"          # "bpe" or "pretrained"
+  model_name: "Helsinki-NLP/opus-mt-en-fr"
+  vocab_size: 32000
+  min_frequency: 2
+  sample_size: 1000000       # rows to sample for BPE training
+  save_dir: "tokenizer_data"
+
+# Model
+model:
+  type: "transformer"
+  d_model: 512
+  n_heads: 6
+  head_dim: 64
+  n_encoder_layers: 8
+  n_decoder_layers: 4
+  d_ff: 1024
+  dropout: 0.1
+  max_seq_len: 128
+
+# Training
+training:
+  batch_size: 32
+  epochs: 50
+  learning_rate: 0.0005
+  warmup_steps: 4000
+  label_smoothing: 0.1
+  grad_clip: 1.0
+  checkpoint_dir: "checkpoints"
+  checkpoint_interval: 2000   # steps
+  eval_interval: 1000         # steps
+  log_interval: 100           # steps (push to dashboard)
+  num_workers: 2
+
+# Server
+server:
+  host: "0.0.0.0"
+  port: 8000
