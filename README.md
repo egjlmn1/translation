@@ -8,20 +8,16 @@ This platform is built across **25 files** organized into 7 specialized packages
 
 ### Key Components
 
-* 
-**Custom Tokenizer:** A Byte Pair Encoding (BPE) implementation capable of learning 32K merge rules from up to 1M rows of text.
+* **Custom Tokenizer:** A Byte Pair Encoding (BPE) implementation capable of learning 32K merge rules from up to 1M rows of text.
 
 
-* 
-**Transformer Model:** A core `nn.Transformer` architecture initialized from scratch to handle sequence-to-sequence translation.
+* **Transformer Model:** A core `nn.Transformer` architecture initialized from scratch to handle sequence-to-sequence translation.
 
 
-* 
-**Streaming Data Pipeline:** Efficiently processes an 8.4 GB dataset using chunked CSV streaming to keep memory usage low.
+* **Streaming Data Pipeline:** Efficiently processes an 8.4 GB dataset using chunked CSV streaming to keep memory usage low.
 
 
-* 
-**Live Dashboard:** A dark-themed web UI that provides real-time training metrics, BLEU scores, and sample predictions via WebSockets.
+* **Live Dashboard:** A dark-themed web UI that provides real-time training metrics, BLEU scores, and sample predictions via WebSockets.
 
 
 
@@ -31,14 +27,14 @@ This platform is built across **25 files** organized into 7 specialized packages
 
 ```text
 Translation/
-[cite_start]├── config.yaml          # Central hyperparameter management [cite: 1, 12]
-[cite_start]├── tokenizer/           # BPE train, encode, and decode logic [cite: 1]
-[cite_start]├── model/               # Transformer encoder-decoder implementation [cite: 1, 2]
-[cite_start]├── data/                # Chunked CSV streaming dataset loader [cite: 1, 13]
-[cite_start]├── training/            # Training loops, checkpointing, and BLEU metrics [cite: 1, 14]
-[cite_start]├── api/                 # FastAPI server and inference engine [cite: 1, 11]
-[cite_start]├── web/                 # UIs for training (dashboard) and translation [cite: 1, 3, 15]
-[cite_start]└── scripts/             # CLI entry points for all operations [cite: 1]
+├── config.yaml          # Central hyperparameter management 
+├── tokenizer/           # BPE train, encode, and decode logic 
+├── model/               # Transformer encoder-decoder implementation 
+├── data/                # Chunked CSV streaming dataset loader 
+├── training/            # Training loops, checkpointing, and BLEU metrics 
+├── api/                 # FastAPI server and inference engine 
+├── web/                 # UIs for training (dashboard) and translation 
+└── scripts/             # CLI entry points for all operations 
 
 ```
 
@@ -87,9 +83,8 @@ python scripts/serve.py
 
 ```
 
-* 
-**Translation UI:** `http://localhost:8000/translate` 
+* **Translation UI:** `http://localhost:8000/translate` 
 
 
-* 
-**Metrics Dashboard:** `http://localhost:8000/dashboard` 
+* **Metrics Dashboard:** `http://localhost:8000/dashboard` 
+
