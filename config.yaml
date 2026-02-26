@@ -7,7 +7,7 @@ data:
   tgt_col: "fr"
   max_seq_len: 128
   val_split: 0.05
-  shuffle_buffer: 2000000
+  shuffle_buffer: 10000
   chunk_size: 10000          # rows per CSV chunk
   max_rows: null             # set to e.g. 10000 for quick testing
 
@@ -36,7 +36,7 @@ model:
 training:
   batch_size: 32
   epochs: 50
-  learning_rate: 0.0005
+  learning_rate: 0.0006
   warmup_steps: 4000
   label_smoothing: 0.1
   grad_clip: 1.0

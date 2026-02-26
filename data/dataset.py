@@ -111,6 +111,17 @@ class TranslationDataset(IterableDataset):
                 random.shuffle(buffer)
                 yield from buffer
 
+    def _estimate_total_rows(self) -> int:
+        """Fast line-count estimate based on sampling the first 1MB."""
+        import os
+        file_size = os.path.getsize(self.csv_path)
+        sample_size = min(1_000_000, file_size)
+        with open(self.csv_path, "r", encoding="utf-8", errors="ignore") as f:
+            sample = f.read(sample_size)
+        lines_in_sample = sample.count("\n")
+        bytes_per_line = sample_size / max(lines_in_sample, 1)
+        return max(1, int(file_size / bytes_per_line))
+
     def _iter_from_csv(self, worker_id: int = 0, num_workers: int = 1) -> Iterator[Tuple[List[int], List[int]]]:
         rows_read = 0
         skipped = 0
@@ -120,19 +131,51 @@ class TranslationDataset(IterableDataset):
         sos_id = self.tokenizer.sos_id
         eos_id = self.tokenizer.eos_id
 
-        reader = pd.read_csv(
-            self.csv_path,
-            chunksize=self.chunk_size,
-            usecols=[self.src_col, self.tgt_col],
-            skiprows=range(1, self.skip_rows + 1) if self.skip_rows > 0 else None,
-            on_bad_lines="skip",
-            encoding="utf-8",
-        )
+        # --- Chunk-level shuffling ---
+        # Instead of reading chunks sequentially (which starves later rows),
+        # we estimate the total number of chunks, shuffle their order, and
+        # read each chunk via random access using skiprows + nrows.
+        estimated_total = self._estimate_total_rows()
+        available_rows = max(1, estimated_total - self.skip_rows)
+        n_chunks = (available_rows + self.chunk_size - 1) // self.chunk_size
 
-        for chunk in reader:
+        chunk_order = list(range(n_chunks))
+        random.shuffle(chunk_order)
+
+        # Read the header line once to get column names
+        header_df = pd.read_csv(self.csv_path, nrows=0, encoding="utf-8")
+        all_column_names = list(header_df.columns)
+
+        print(f"[Dataset] Estimated ~{estimated_total} total rows, {n_chunks} chunks "
+              f"(chunk_size={self.chunk_size}, skip_rows={self.skip_rows}). Shuffled chunk order.")
+
+        for chunk_idx in chunk_order:
+            # Calculate how many lines to skip:
+            #   +1 for the CSV header row
+            #   +self.skip_rows for validation rows reserved at the top
+            #   +chunk_idx * self.chunk_size to reach this chunk's data
+            rows_to_skip = 1 + self.skip_rows + chunk_idx * self.chunk_size
+
+            try:
+                chunk = pd.read_csv(
+                    self.csv_path,
+                    skiprows=rows_to_skip,
+                    nrows=self.chunk_size,
+                    header=None,
+                    names=all_column_names,
+                    usecols=[self.src_col, self.tgt_col],
+                    on_bad_lines="skip",
+                    encoding="utf-8",
+                )
+            except (pd.errors.EmptyDataError, StopIteration, pd.errors.ParserError):
+                continue
+
+            if chunk.empty:
+                continue
+
             chunk = chunk.dropna(subset=[self.src_col, self.tgt_col])
-            # 1. First, partition the RAW strings (very fast)
-            # This ensures we only tokenize what this worker actually needs
+
+            # Worker partitioning — each worker takes its slice
             chunk_indices = [i for i in range(len(chunk)) if (global_row_index + i) % num_workers == worker_id]
             global_row_index += len(chunk)
             
@@ -141,11 +184,11 @@ class TranslationDataset(IterableDataset):
                 
             chunk_partition = chunk.iloc[chunk_indices]
             
-            # 2. Vectorized text extraction on partition
+            # Vectorized text extraction on partition
             src_texts = chunk_partition[self.src_col].astype(str).tolist()
             tgt_texts = chunk_partition[self.tgt_col].astype(str).tolist()
             
-            # 3. Parallel tokenization (only on assigned rows)
+            # Parallel tokenization (only on assigned rows)
             src_token_batches = self.tokenizer.encode_batch(src_texts)
             tgt_token_batches = self.tokenizer.encode_batch(tgt_texts)
             

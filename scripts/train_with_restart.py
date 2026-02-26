@@ -10,7 +10,7 @@ WAIT_SECONDS = 5   # Wait between restarts to let GPU cool/reset
 def main():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     # checkpoint_path = os.path.join(project_root, "checkpoints", "checkpoint_latest.pt")
-    checkpoint_path = os.path.join(project_root, "checkpoints", "checkpoint_good_for_now.pt")
+    checkpoint_path = os.path.join(project_root, "checkpoints", "checkpoint_latest.pt")
     
     # Forward any extra args (like --with-server)
     extra_args = sys.argv[1:]
